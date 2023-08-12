@@ -1,3 +1,7 @@
+import {getDayOrNight} from "./hora.js";
+
+const cityImageToDisplay = document.querySelector(".city");
+
 const ElSalvador = (function(){
     'use strict';
 
@@ -41,30 +45,36 @@ const ElSalvador = (function(){
 
 
     const _climaSanMiguel = function(){
+        cityImageToDisplay.src = "img/san-miguel.png";
         return "Uno";
     }
     const _climaUsulutan = function(){
+        cityImageToDisplay.src = "img/usulutan.png";
         return "Dos";
     }
     const _climaLaUnion = function(){
+        cityImageToDisplay.src = "img/la-union.png";
         return "Tres";
     }
     const _climaSantaAna = function(){
+        cityImageToDisplay.src = "img/santa-ana.png";
         return "Cuatro";
     }
     const _climaSanSalvador = function(){
+        cityImageToDisplay.src = "img/san-salvador.png";
         return "Cinco";
     }
 
     const mostrarClima = function(departamento){
         switch (departamento) {
             case "San Miguel":
+
                 return _climaSanMiguel();
                 break;
-            case "Usulutan":
+            case "Usulután":
                 return _climaUsulutan();
                 break;
-            case "La Union":
+            case "La Unión":
                 return _climaLaUnion();
                 break;
             case "Santa Ana":
@@ -74,7 +84,7 @@ const ElSalvador = (function(){
                     return _climaSanSalvador();
                     break;
             default:
-                return "No se encontro";
+                return "No se encontró";
                 break;
         }
     }
@@ -85,16 +95,25 @@ const ElSalvador = (function(){
 })();
 
 // console.log(ElSalvador.SanMiguel.clima());
-const setIcon = (function(){
-    const isDay = true;
 
-    if(!isDay){
-        document.querySelector(".day-or-night").src = "img/night.png";
-    } else {
+const setTimeIcon = (function () {
+    function setIcon() {
+        const timeStatus = getDayOrNight();
         const myImage = document.querySelector(".day-or-night");
-        myImage.src = "img/day.png";
+
+        if (timeStatus === "Noche") {
+            myImage.src = "img/night.png";
+        } else {
+            myImage.src = "img/day.png";
+        }
         myImage.width = 50;
     }
+
+    setIcon(); // Call the function immediately to set the icon
+
+    return {
+        setIcon
+    };
 })();
 
 
@@ -103,14 +122,31 @@ const citySelect = document.querySelector("[data-select-city]");
 const viewWeatherButton = document.querySelector("[data-weather-button]");
 const alertMessage = document.querySelector(".alert");
 
-viewWeatherButton.addEventListener("click", function (){
-    const citySelected = citySelect.options[citySelect.selectedIndex].text;
+citySelect.addEventListener("change", function () {
+    const citySelected = citySelect.options[citySelect.selectedIndex].value;
 
-    if(citySelected === "Selecciona un departamento"){
+    if (citySelected === "Selecciona un departamento") {
         alertMessage.classList.remove("d-none");
+        viewWeatherButton.disabled = true;
+        viewWeatherButton.classList.add("btn-danger");
+    } else {
+        alertMessage.classList.add("d-none");
+        viewWeatherButton.disabled = false;
+        viewWeatherButton.classList.remove("btn-danger");
+    }
+});
+
+viewWeatherButton.addEventListener("click", function () {
+    const citySelected = citySelect.options[citySelect.selectedIndex].value;
+
+    if (citySelected === "Selecciona un departamento") {
+        alertMessage.classList.remove("d-none");
+        viewWeatherButton.disabled = true;
+        viewWeatherButton.classList.add("btn-danger");
     }
 
-    citySelect.addEventListener("change", function (){
-        alertMessage.classList.add("d-none");
-    });
+    ElSalvador.mostrarClima(citySelected);
+    viewWeatherButton.setAttribute('data-bs-toggle', 'modal');
+    setTimeIcon.setIcon();
 });
+

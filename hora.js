@@ -1,4 +1,4 @@
-function getDayOrNight() {
+export const getDayOrNight = () => {
     const openWeatherMapApiKey = '5d5d1e66b1dd70397908aa7f3a0e71fc';
     const googleTimeZoneApiKey = 'AIzaSyD1yrU17yiScxBNJrZhuoZsdkWOIiUKQqk';
     const lat = '13.466440';
@@ -38,27 +38,20 @@ function getDayOrNight() {
             } else {
                 result = 'Noche';
             }
-
             return result;
         })
         .catch(error => {
             console.error('Error:', error);
             return 'Error'; // Retorna 'Error' en caso de fallo
         });
-}
+};
 
-// ...
-
-// Llamada a la función y guardar el resultado en una variable
-let resultadoDiaNoche;
-
-getDayOrNight()
-    .then(dayOrNight => {
-        resultadoDiaNoche = dayOrNight;
-        console.log('Resultado:', resultadoDiaNoche); // Muestra el resultado inmediatamente
-    });
+getDayOrNight().then(dayOrNight => {
+    // Muestra el resultado inmediatamente
+    return dayOrNight;
+});
 
 // Luego, en cualquier parte de tu código, puedes acceder a la variable resultadoDiaNoche para mostrar el valor guardado.
 
 // Por ejemplo:
-console.log('Resultado almacenado:', resultadoDiaNoche);
+// console.log('Resultado almacenado:', resultadoDiaNoche);
