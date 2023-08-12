@@ -1,4 +1,4 @@
-function temperatura() {
+function getCityInfo() {
     const apiKey = '5d5d1e66b1dd70397908aa7f3a0e71fc';
     const city = 'Ciudad';
     const lat = '13.466440';
@@ -29,4 +29,8 @@ function temperatura() {
 
     console.log(temperatura);
     return temperatura;
+}
+
+export const getWeatherInfo = () => {
+
 }
