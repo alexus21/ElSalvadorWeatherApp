@@ -1,52 +1,41 @@
 import {getDayOrNight} from "./hora.js";
+import {getCityWeatherInfo} from "./uno.js";
 
 const cityImageToDisplay = document.querySelector(".city");
+
+async function fetchWeatherInfo() {
+    return await getCityWeatherInfo();
+}
+
+const showWeatherInfo = async () => {
+    const modalBody = document.querySelector(".modal-body");
+
+    // Borra los elementos previamente existentes para no acumular nada
+    while (modalBody.firstChild) {
+        modalBody.removeChild(modalBody.firstChild);
+    }
+
+    try {
+        const weatherInfoArray = await fetchWeatherInfo();
+
+        weatherInfoArray.forEach((item) => {
+            const data = document.createElement("p");
+            data.textContent = item[0] + item[1]; // Usar el índice 0 y 1 del sub-array
+            modalBody.appendChild(data);
+        });
+
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
 
 const ElSalvador = (function(){
     'use strict';
 
-    // async function getCityWeather(city) {
-    //     const apiKey = '78a21ef19440fd21f659455f994e9e78'; // Replace with your OpenWeatherMap API key
-    //     const lat = 13.47968247583704;
-    //     const lon = -88.17767357039016;
-    //     const currentTime = Math.floor(Date.now() / 1000); // Get the current Unix timestamp
-    //     const apiUrl = `https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=${lat}&lon=${lon}&dt=${currentTime}&units=metric&appid=${apiKey}`;
-    //
-    //     try {
-    //         const response = await fetch(apiUrl);
-    //         if (!response.ok) {
-    //             throw new Error(`HTTP error! Status: ${response.status}`);
-    //         }
-    //         const weatherData = await response.json();
-    //
-    //         const celsiusTemp = weatherData.current.temp;
-    //
-    //         console.log(`Clima en ${city}:`);
-    //         console.log(`Temperatura: ${celsiusTemp}°C`);
-    //         console.log(`Descripción: ${weatherData.current.weather[0].description}`);
-    //
-    //         const timestamp = currentWeather.dt;
-    //         const date = new Date(timestamp * 1000);
-    //         const currentTimeFormatted = date.toLocaleTimeString('en-US', {
-    //             hour12: false,
-    //             hour: 'numeric',
-    //             minute: 'numeric',
-    //             second: 'numeric'
-    //         });
-    //
-    //         console.log(`Current time in ${city}: ${currentTimeFormatted}`);
-    //     } catch (error) {
-    //         console.error(`Error retrieving weather data: ${error}`);
-    //     }
-    // }
-
-// Call the function
-//     getCityWeather('San Miguel');
-
-
     const _climaSanMiguel = function(){
         cityImageToDisplay.src = "img/san-miguel.png";
-        return "Uno";
+        return showWeatherInfo();
     }
     const _climaUsulutan = function(){
         cityImageToDisplay.src = "img/usulutan.png";
@@ -68,7 +57,6 @@ const ElSalvador = (function(){
     const mostrarClima = function(departamento){
         switch (departamento) {
             case "San Miguel":
-
                 return _climaSanMiguel();
                 break;
             case "Usulután":
@@ -80,9 +68,9 @@ const ElSalvador = (function(){
             case "Santa Ana":
                 return _climaSantaAna();
                 break;
-                case "San Salvador":
-                    return _climaSanSalvador();
-                    break;
+            case "San Salvador":
+                return _climaSanSalvador();
+                break;
             default:
                 return "No se encontró";
                 break;
@@ -93,8 +81,6 @@ const ElSalvador = (function(){
         mostrarClima
     }
 })();
-
-// console.log(ElSalvador.SanMiguel.clima());
 
 const setTimeIcon = (function () {
     function setIcon() {
@@ -149,4 +135,3 @@ viewWeatherButton.addEventListener("click", function () {
     viewWeatherButton.setAttribute('data-bs-toggle', 'modal');
     setTimeIcon.setIcon();
 });
-

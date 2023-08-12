@@ -1,36 +1,30 @@
-function getCityInfo() {
+export const getCityWeatherInfo = async () => {
     const apiKey = '5d5d1e66b1dd70397908aa7f3a0e71fc';
     const city = 'Ciudad';
     const lat = '13.466440';
     const lon = '-88.165792';
     let temperatura = -1000;
 
-// URL de la API de OpenWeatherMap
-//const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
-    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}`;
+    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&cnt=16&units=metric&lang=es&appid=${apiKey}`;
 
-// Realiza una solicitud a la API
-    fetch(apiUrl)
-        .then(response => response.json())
-        .then(data => {
-            // Extrae los datos climáticos relevantes de la respuesta
-            const weather = data.weather[0].description;
-            const temperature = (data.main.temp - 273.15).toPrecision(5);
-            const humidity = data.main.humidity;
+    try {
+        const response = await fetch(apiUrl);
+        const data = await response.json();
 
-            console.log('Clima:', weather);
-            console.log('Temperatura:', temperature + '°C');
-            console.log('Humedad:', humidity + '%');
-            temperatura = temperature;
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+        const weather = data.weather[0].main;
+        const temperature = data.main.temp.toPrecision(4);
+        const max = data.main.temp_max.toPrecision(4);
+        const min = data.main.temp_min.toPrecision(4);
+        const humidity = data.main.humidity;
 
-    console.log(temperatura);
-    return temperatura;
-}
-
-export const getWeatherInfo = () => {
-
-}
+        return [
+            ["Clima: ", weather],
+            ["Temperatura: ", temperature + " °C"],
+            ["Máxima: ", max +  " °C"],
+            ["Mínima: ", min +  " °C"],
+            ["Humedad: ", humidity +  " °C"]
+        ];
+    } catch (error) {
+        console.error('Error:', error);
+    }
+};
