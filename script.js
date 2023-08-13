@@ -1,5 +1,5 @@
 import {getDayOrNight} from "./hora.js";
-import {getCityWeatherInfo} from "./uno.js";
+import {getCityWeatherInfo} from "./weather.js";
 
 function validarPalabras(palabra, palabrasValidas) {
     for (const palabraValida of palabrasValidas) {
