@@ -1,14 +1,24 @@
 import {getDayOrNight} from "./hora.js";
 import {getCityWeatherInfo} from "./uno.js";
 
-const cityImageToDisplay = document.querySelector(".city");
-
-async function fetchWeatherInfo() {
-    return await getCityWeatherInfo();
+function validarPalabras(palabra, palabrasValidas) {
+    for (const palabraValida of palabrasValidas) {
+        if (palabra.includes(palabraValida)) {
+            return true; // Se encontró una palabra válida
+        }
+    }
+    return false; // No se encontraron palabras válidas
 }
 
-const showWeatherInfo = async () => {
+const cityImageToDisplay = document.querySelector(".city");
+
+async function fetchWeatherInfo(latitud, longitud) {
+    return await getCityWeatherInfo(latitud, longitud);
+}
+
+const showWeatherInfo = async (latitud, longitud) => {
     const modalBody = document.querySelector(".modal-body");
+    const icon = document.querySelector("[data-image-icon]");
 
     // Borra los elementos previamente existentes para no acumular nada
     while (modalBody.firstChild) {
@@ -16,7 +26,15 @@ const showWeatherInfo = async () => {
     }
 
     try {
-        const weatherInfoArray = await fetchWeatherInfo();
+        const weatherInfoArray = await fetchWeatherInfo(latitud, longitud);
+
+        if (validarPalabras(weatherInfoArray[0][1], ["nube", "nubes", "nuboso"])){
+            icon.src = "img/nubes.png";
+        }else if (validarPalabras(weatherInfoArray[0][1], ["lluvia", "lluvias"])){
+            icon.src = "img/lluvia.png";
+        }else{
+            icon.src = "img/xd.jpeg";
+        }
 
         weatherInfoArray.forEach((item) => {
             const data = document.createElement("p");
@@ -35,23 +53,23 @@ const ElSalvador = (function(){
 
     const _climaSanMiguel = function(){
         cityImageToDisplay.src = "img/san-miguel.png";
-        return showWeatherInfo();
+        return showWeatherInfo('13.473673', '-88.167030');
     }
     const _climaUsulutan = function(){
         cityImageToDisplay.src = "img/usulutan.png";
-        return "Dos";
+        return showWeatherInfo('13.343772', '-88.441832');
     }
     const _climaLaUnion = function(){
         cityImageToDisplay.src = "img/la-union.png";
-        return "Tres";
+        return showWeatherInfo('13.334524', '-87.853160');
     }
     const _climaSantaAna = function(){
         cityImageToDisplay.src = "img/santa-ana.png";
-        return "Cuatro";
+        return showWeatherInfo('13.982981', '-89.561965');
     }
     const _climaSanSalvador = function(){
         cityImageToDisplay.src = "img/san-salvador.png";
-        return "Cinco";
+        return showWeatherInfo('13.694310', '-89.214566');
     }
 
     const mostrarClima = function(departamento){
@@ -83,8 +101,8 @@ const ElSalvador = (function(){
 })();
 
 const setTimeIcon = (function () {
-    function setIcon() {
-        const timeStatus = getDayOrNight();
+    async function setIcon() {
+        const timeStatus = await getDayOrNight();
         const myImage = document.querySelector(".day-or-night");
 
         if (timeStatus === "Noche") {
@@ -115,6 +133,7 @@ citySelect.addEventListener("change", function () {
         alertMessage.classList.remove("d-none");
         viewWeatherButton.disabled = true;
         viewWeatherButton.classList.add("btn-danger");
+        document.querySelector("[data-image-icon]").src = "img/xd.jpeg";
     } else {
         alertMessage.classList.add("d-none");
         viewWeatherButton.disabled = false;
